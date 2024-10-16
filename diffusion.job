@@ -1,0 +1,22 @@
+#!/bin/bash
+#SBATCH -q debug
+#SBATCH -C gpu&hbm80g
+##SBATCH -C gpu
+#SBATCH -N 1
+#SBATCH -n 1
+#SBATCH --time=00:10:00
+##SBATCH --requeue
+#SBATCH -A m4031_g
+#SBATCH -G 4
+#SBATCH -c 128
+#SBATCH --ntasks-per-node=1
+#SBATCH --gpus-per-task=4
+#SBATCH --cpus-per-task=128
+##SBATCH -d 24705820
+
+module load python
+source activate MLscratch
+
+export CUDA_LAUNCH_BLOCKING=1
+
+srun python -u train_ssdisk.py --outdir=/pscratch/sd/b/biwei/phase_retrieval/diffusion --arch=ddpmpp --dropout=0 --tick=1 --snap=50 --dump=50 --batch=128 --duration=1 --ema=0.1
